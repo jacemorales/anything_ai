@@ -27,7 +27,7 @@
             </div>
                     </li>
                 </ul>
-        <div class="version">v1.3.3</div>
+        <div class="version">v1.3.8</div>
             </aside>
 
             <main class="chat-container">
