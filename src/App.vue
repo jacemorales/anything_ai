@@ -1,7 +1,6 @@
-<script setup>
-import myApp from './components/index.vue'
-</script>
-
 <template>
-  <myApp/>
+  <router-view />
 </template>
+
+<script setup lang="ts">
+</script>
