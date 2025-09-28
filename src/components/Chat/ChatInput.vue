@@ -30,7 +30,6 @@ import { storeToRefs } from 'pinia';
 const inputText = ref('');
 const textarea = ref<HTMLTextAreaElement | null>(null);
 const isListening = ref(false);
-let recognition: SpeechRecognition | null = null;
 let listenStartTime: number | null = null;
 
 const chatStore = useChatStore();
@@ -38,8 +37,12 @@ const userStore = useUserStore();
 const { hasVoiceQuota } = storeToRefs(userStore);
 const { isLoading } = storeToRefs(chatStore);
 
-if ('webkitSpeechRecognition' in window) {
-  recognition = new webkitSpeechRecognition();
+// Safely initialize SpeechRecognition
+const recognition: SpeechRecognition | null = ('webkitSpeechRecognition' in window)
+  ? new window.webkitSpeechRecognition()
+  : null;
+
+if (recognition) {
   recognition.continuous = true;
   recognition.interimResults = true;
 
@@ -67,7 +70,10 @@ if ('webkitSpeechRecognition' in window) {
 }
 
 const toggleListen = () => {
-  if (!recognition) return;
+  if (!recognition) {
+    alert("Speech recognition is not supported in this browser.");
+    return;
+  }
   if (!hasVoiceQuota.value) {
     alert("You've run out of voice-to-text minutes.");
     return;

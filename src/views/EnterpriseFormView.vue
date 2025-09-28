@@ -48,8 +48,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '../stores/user';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
+const router = useRouter();
 
 const formData = ref({
   orgName: '',
@@ -61,6 +63,7 @@ const formData = ref({
 
 const submitForm = () => {
   userStore.submitEnterpriseRequest(formData.value);
+  router.push('/enterprise-confirmation');
 };
 </script>
 

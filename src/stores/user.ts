@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import router from '../router';
 
 type Plan = 'daily' | 'monthly' | 'enterprise' | null;
 
@@ -57,12 +56,6 @@ export const useUserStore = defineStore('user', {
     selectPlan(plan: 'daily' | 'monthly' | 'enterprise') {
       this.plan = plan;
       this.resetUsage();
-
-      if (plan === 'enterprise') {
-        router.push('/enterprise-form');
-      } else {
-        router.push('/chat');
-      }
     },
     incrementUsage(prompt: string) {
       this.promptsUsed++;
@@ -80,7 +73,6 @@ export const useUserStore = defineStore('user', {
         console.log("Enterprise request submitted:", details);
         // Here you would typically send the details to a backend server.
         // For this mock, we'll just log it.
-        router.push('/enterprise-confirmation');
     }
   },
 });

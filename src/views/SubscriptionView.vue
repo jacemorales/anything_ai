@@ -1,5 +1,5 @@
 <template>
-  <div class="subscription-container">
+  <div :class="{ 'subscription-container': !isModal }">
     <header class="header">
       <h1 class="title">Choose Your Plan</h1>
       <p class="subtitle">Unlock the full power of AI. Cancel anytime.</p>
@@ -19,7 +19,7 @@
           <li><span class="icon">📄</span> Simple tasks (summaries, Q&A).</li>
           <li><span class="icon">⚡</span> Standard response time.</li>
         </ul>
-        <button @click="selectPlan('daily')" class="select-plan-btn">Choose Daily</button>
+        <button @click="handlePlanSelection('daily')" class="select-plan-btn">Choose Daily</button>
       </div>
 
       <!-- Monthly Pro -->
@@ -36,7 +36,7 @@
           <li><span class="icon">🧠</span> Personalized usage (basic memory).</li>
           <li><span class="icon">⚡</span> Faster responses + higher priority.</li>
         </ul>
-        <button @click="selectPlan('monthly')" class="select-plan-btn">Choose Pro</button>
+        <button @click="handlePlanSelection('monthly')" class="select-plan-btn">Choose Pro</button>
       </div>
 
       <!-- Enterprise / Power User -->
@@ -53,7 +53,7 @@
           <li><span class="icon">🔒</span> Secure data handling (privacy-first).</li>
           <li><span class="icon">🎧</span> Dedicated priority support.</li>
         </ul>
-        <button @click="selectPlan('enterprise')" class="select-plan-btn">Choose Enterprise</button>
+        <button @click="handlePlanSelection('enterprise')" class="select-plan-btn">Choose Enterprise</button>
       </div>
     </main>
   </div>
@@ -61,11 +61,32 @@
 
 <script setup lang="ts">
 import { useUserStore } from '../stores/user';
+import { useRouter } from 'vue-router';
+
+const props = defineProps({
+  isModal: {
+    type: Boolean,
+    default: false,
+  }
+});
+
+const emit = defineEmits(['plan-selected']);
 
 const userStore = useUserStore();
+const router = useRouter();
 
-const selectPlan = (plan: 'daily' | 'monthly' | 'enterprise') => {
+const handlePlanSelection = (plan: 'daily' | 'monthly' | 'enterprise') => {
   userStore.selectPlan(plan);
+
+  if (props.isModal) {
+    emit('plan-selected');
+  } else {
+    if (plan === 'enterprise') {
+      router.push('/enterprise-form');
+    } else {
+      router.push('/chat');
+    }
+  }
 };
 </script>
 

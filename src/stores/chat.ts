@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { GeminiService } from '../services/GeminiService';
 
 interface Message {
   text: string;
@@ -17,6 +16,7 @@ interface ChatState {
   chats: Chat[];
   currentChatId: number | null;
   isLoading: boolean;
+  showUpgradeModal: boolean;
 }
 
 let nextChatId = 1;
@@ -26,6 +26,7 @@ export const useChatStore = defineStore('chat', {
     chats: [],
     currentChatId: null,
     isLoading: false,
+    showUpgradeModal: false,
   }),
   getters: {
     currentChat: (state) => {
@@ -37,6 +38,12 @@ export const useChatStore = defineStore('chat', {
     },
   },
   actions: {
+    openUpgradeModal() {
+      this.showUpgradeModal = true;
+    },
+    closeUpgradeModal() {
+      this.showUpgradeModal = false;
+    },
     startNewChat() {
       const newChat: Chat = {
         id: nextChatId++,
@@ -52,12 +59,35 @@ export const useChatStore = defineStore('chat', {
       this.currentChat.messages.push({ text, sender: 'user' });
       this.isLoading = true;
 
+      const token = localStorage.getItem('authToken');
+
       try {
-        const response = await GeminiService.generateContent(text);
-        this.currentChat.messages.push(response);
-      } catch (error) {
-        console.error("Failed to get response from GeminiService", error);
-        this.currentChat.messages.push({ text: "Sorry, something went wrong.", sender: 'ai' });
+        const response = await fetch('http://localhost:3000/api/ai/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ prompt: text }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            // Push the error message and open the upgrade modal
+            this.currentChat.messages.push({ text: data.error, sender: 'ai' });
+            this.openUpgradeModal();
+          } else {
+            throw new Error(data.error || 'An error occurred');
+          }
+        } else {
+          this.currentChat.messages.push({ text: data.reply, sender: 'ai' });
+        }
+
+      } catch (error: any) {
+        console.error("Failed to get response from backend", error);
+        this.currentChat.messages.push({ text: error.message || "Sorry, something went wrong.", sender: 'ai' });
       } finally {
         this.isLoading = false;
       }

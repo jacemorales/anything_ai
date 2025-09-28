@@ -10,15 +10,11 @@
       <button class="tool-btn" @click="copyToClipboard" title="Copy">📋</button>
       <button class="tool-btn" v-if="message.sender === 'user'" @click="resendMessage" title="Resend">🔄</button>
     </div>
-    <div v-if="message.isQuotaExceeded" class="upgrade-prompt">
-      <button @click="goToSubscriptions" class="upgrade-btn">Upgrade Plan</button>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 
 interface Message {
   text: string;
@@ -31,11 +27,8 @@ const props = defineProps<{
   message: Message;
 }>();
 
-const router = useRouter();
-
 const formattedText = computed(() => {
   // A simple formatter for demonstration.
-  // In a real app, you might use a library like marked.js for markdown.
   return props.message.text.replace(/\n/g, '<br>');
 });
 
@@ -46,10 +39,6 @@ const copyToClipboard = () => {
 
 const resendMessage = () => {
   // Emit an event to resend the message
-};
-
-const goToSubscriptions = () => {
-  router.push('/');
 };
 </script>
 
@@ -149,25 +138,5 @@ const goToSubscriptions = () => {
   30% {
     transform: translateY(-8px);
   }
-}
-
-.upgrade-prompt {
-  margin-top: 10px;
-}
-
-.upgrade-btn {
-  background-color: #fdab42;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.upgrade-btn:hover {
-  background-color: #f39c12;
 }
 </style>

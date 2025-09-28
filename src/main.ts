@@ -10,4 +10,11 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
+// Global Error Handler
+app.config.errorHandler = (err, instance, info) => {
+  console.error("Global error:", err);
+  console.log("Vue instance:", instance);
+  console.log("Error info:", info);
+};
+
 app.mount('#app')
