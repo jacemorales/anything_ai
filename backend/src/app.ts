@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import authRoutes from './modules/auth/auth.routes';
 import aiRoutes from './modules/ai/ai.routes';
+import subscriptionRoutes from './modules/subscription/subscription.routes';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 
 // Simple test route
 app.get('/', (req, res) => {
