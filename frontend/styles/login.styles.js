@@ -49,4 +49,9 @@ export default StyleSheet.create({
     color: '#007bff',
     fontSize: 16,
   },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
 });

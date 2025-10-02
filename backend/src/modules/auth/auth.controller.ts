@@ -31,6 +31,7 @@ export const AuthController = {
       if (error.message === 'Invalid credentials') {
         return res.status(401).json({ message: error.message });
       }
+      console.error('Login error:', error);
       res.status(500).json({ message: 'Server error during login' });
     }
   },

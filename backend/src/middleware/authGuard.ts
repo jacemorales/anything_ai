@@ -19,6 +19,7 @@ export const authGuard = (req: AuthRequest, res: Response, next: NextFunction) =
       req.user = {
         id: (decoded as JwtPayload).id,
         email: (decoded as JwtPayload).email,
+        isAdmin: (decoded as JwtPayload).isAdmin,
       };
       next();
     } else {
