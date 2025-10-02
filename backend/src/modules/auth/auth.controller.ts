@@ -14,6 +14,7 @@ export const AuthController = {
       if (error.message === 'Email already in use') {
         return res.status(409).json({ message: error.message });
       }
+      console.error(error); // Log the actual error
       res.status(500).json({ message: 'Server error during sign up' });
     }
   },

@@ -1,10 +1,6 @@
 import { Response } from 'express';
 import { AIService } from './ai.service';
-
-// Custom Request type to include the user property from our authGuard
-interface AuthRequest extends Request {
-  user?: { id: number };
-}
+import { AuthRequest } from '../../types/auth';
 
 export const AIController = {
   async generate(req: AuthRequest, res: Response) {
