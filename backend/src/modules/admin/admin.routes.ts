@@ -9,5 +9,6 @@ const router = Router();
 router.use(authGuard, adminGuard);
 
 router.get('/stats', AdminController.getStats);
+router.get('/users', AdminController.getUsers);
 
 export default router;

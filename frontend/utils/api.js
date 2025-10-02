@@ -11,6 +11,28 @@ export const signup = async (email, password) => {
   return response.json();
 };
 
+export const getAdminStats = async (token) => {
+  const response = await fetch(`${BASE_URL}/admin/stats`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  return response.json();
+};
+
+export const getAdminUsers = async (token) => {
+  const response = await fetch(`${BASE_URL}/admin/users`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  return response.json();
+};
+
 export const login = async (email, password) => {
   const response = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',

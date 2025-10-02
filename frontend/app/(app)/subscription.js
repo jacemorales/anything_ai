@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getSubscription, updateSubscription } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import styles from '../../styles/subscription.styles.js';
 
 const SubscriptionScreen = () => {
   const [currentPlan, setCurrentPlan] = useState(null);
@@ -18,7 +19,6 @@ const SubscriptionScreen = () => {
         if (data && data.plan) {
           setCurrentPlan(data.plan);
         } else {
-          // If no subscription, default to a basic plan or handle as needed
           setCurrentPlan('daily');
         }
       } catch (error) {
@@ -51,48 +51,39 @@ const SubscriptionScreen = () => {
 
   if (loading && !currentPlan) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }
 
+  const renderPlan = (plan, title, description) => (
+    <TouchableOpacity
+      style={[styles.planContainer, currentPlan === plan && styles.selectedPlan]}
+      onPress={() => handlePlanChange(plan)}
+      disabled={loading}
+    >
+      <Text style={styles.planTitle}>{title}</Text>
+      <Text style={styles.planDescription}>{description}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
+      <Image source={require('../../assets/brand.png')} style={styles.brandLogo} />
       <Text style={styles.title}>Manage Subscription</Text>
       <Text style={styles.currentPlan}>Current Plan: {currentPlan}</Text>
-      {loading && <ActivityIndicator />}
-      <View style={styles.buttonContainer}>
-        <Button title="Daily" onPress={() => handlePlanChange('daily')} disabled={loading} />
-        <Button title="Monthly" onPress={() => handlePlanChange('monthly')} disabled={loading} />
-        <Button title="Enterprise" onPress={() => handlePlanChange('enterprise')} disabled={loading} />
+      {loading && <ActivityIndicator style={styles.loader} />}
+      <View style={styles.plansWrapper}>
+        {renderPlan('daily', 'Daily', 'A simple plan for casual users.')}
+        {renderPlan('monthly', 'Monthly', 'Best for regular users.')}
+        {renderPlan('enterprise', 'Enterprise', 'For power users and businesses.')}
       </View>
-      <Button title="Go Back" onPress={() => router.back()} />
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>Go Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 24,
-  },
-  currentPlan: {
-    fontSize: 18,
-    marginBottom: 24,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 24,
-  },
-});
 
 export default SubscriptionScreen;

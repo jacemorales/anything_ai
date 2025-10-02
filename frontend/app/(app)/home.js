@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Button,
-  StyleSheet,
   TextInput,
+  TouchableOpacity,
   FlatList,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { generate } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import styles from '../../styles/home.styles.js';
+import * as Animatable from 'react-native-animatable';
 
 const HomeScreen = () => {
   const [messages, setMessages] = useState([]);
@@ -45,13 +47,16 @@ const HomeScreen = () => {
 
   const handleLogout = () => {
     logout();
-    // Navigation will be handled by the root layout.
   };
 
   const renderItem = ({ item }) => (
-    <View style={[styles.messageContainer, item.sender === 'user' ? styles.userMessage : styles.aiMessage]}>
+    <Animatable.View
+      animation="fadeIn"
+      duration={500}
+      style={[styles.messageContainer, item.sender === 'user' ? styles.userMessage : styles.aiMessage]}
+    >
       <Text style={styles.messageText}>{item.text}</Text>
-    </View>
+    </Animatable.View>
   );
 
   return (
@@ -60,11 +65,19 @@ const HomeScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
+      <View style={styles.header}>
+        <Image source={require('../../assets/icon.png')} style={styles.logo} />
+        <Text style={styles.headerTitle}>AI Assistant</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logoutButton}>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={messages}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.messageList}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -72,63 +85,20 @@ const HomeScreen = () => {
           value={prompt}
           onChangeText={setPrompt}
           placeholder="Type your message..."
+          placeholderTextColor="#999"
         />
-        <Button title="Send" onPress={handleSend} disabled={loading} />
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend} disabled={loading}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
       </View>
-      <Button
-        title="Manage Subscription"
+      <TouchableOpacity
+        style={styles.subscriptionButton}
         onPress={() => router.push('/subscription')}
-      />
-      <Button
-        title="Logout"
-        onPress={handleLogout}
-        color="#f00"
-      />
+      >
+        <Text style={styles.subscriptionButtonText}>Manage Subscription</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-  messageList: {
-    flex: 1,
-  },
-  messageContainer: {
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 4,
-    maxWidth: '80%',
-  },
-  userMessage: {
-    backgroundColor: '#dcf8c6',
-    alignSelf: 'flex-end',
-  },
-  aiMessage: {
-    backgroundColor: '#f1f0f0',
-    alignSelf: 'flex-start',
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    padding: 10,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    marginRight: 10,
-  },
-});
 
 export default HomeScreen;
