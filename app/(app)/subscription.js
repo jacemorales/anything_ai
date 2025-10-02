@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
 import { getSubscription, updateSubscription } from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 
-const SubscriptionScreen = ({ navigation }) => {
+const SubscriptionScreen = () => {
   const [currentPlan, setCurrentPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const { token } = useAuth();
 
   useEffect(() => {
@@ -65,7 +67,7 @@ const SubscriptionScreen = ({ navigation }) => {
         <Button title="Monthly" onPress={() => handlePlanChange('monthly')} disabled={loading} />
         <Button title="Enterprise" onPress={() => handlePlanChange('enterprise')} disabled={loading} />
       </View>
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <Button title="Go Back" onPress={() => router.back()} />
     </View>
   );
 };

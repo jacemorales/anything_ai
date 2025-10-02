@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { signup } from '../../utils/api';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
 
-const RegisterScreen = ({ navigation }) => {
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { login } = useAuth();
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
+    setLoading(true);
     try {
-      const data = await signup(email, password);
-      if (data.user) {
-        Alert.alert('Registration Successful', 'You can now log in.');
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Registration Failed', data.message || 'An error occurred.');
-      }
+      await login(email, password);
+      // After login, the root layout will automatically redirect to the app.
     } catch (error) {
-      Alert.alert('Registration Error', 'An error occurred while trying to register.');
+      Alert.alert('Login Failed', error.message || 'An error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -38,10 +40,11 @@ const RegisterScreen = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Login" onPress={handleLogin} disabled={loading} />
       <Button
-        title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
+        title="Go to Register"
+        onPress={() => router.push('/register')}
+        disabled={loading}
       />
     </View>
   );
@@ -67,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

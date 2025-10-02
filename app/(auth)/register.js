@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 
-const LoginScreen = ({ navigation }) => {
+const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const router = useRouter();
+  const { signup } = useAuth();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setLoading(true);
     try {
-      await login(email, password);
-      // Navigation will be handled by the App navigator based on the token state.
+      await signup(email, password);
+      Alert.alert('Registration Successful', 'You can now log in.');
+      router.replace('/login');
     } catch (error) {
-      Alert.alert('Login Failed', error.message || 'An error occurred.');
+      Alert.alert('Registration Failed', error.message || 'An error occurred.');
     } finally {
       setLoading(false);
     }
@@ -22,7 +25,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -38,10 +41,10 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} disabled={loading} />
+      <Button title="Register" onPress={handleRegister} disabled={loading} />
       <Button
-        title="Go to Register"
-        onPress={() => navigation.navigate('Register')}
+        title="Go to Login"
+        onPress={() => router.push('/login')}
         disabled={loading}
       />
     </View>
@@ -68,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
