@@ -9,17 +9,8 @@ export const adminGuard = async (req: AuthRequest, res: Response, next: NextFunc
     return res.status(401).json({ message: 'Authentication required.' });
   }
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-    });
-
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ message: 'Forbidden: Admin access required.' });
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error while verifying admin status.' });
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(403).json({ message: 'Forbidden: Admin access required.' });
   }
+  next();
 };
