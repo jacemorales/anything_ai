@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter, useSegments } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
+import { getItemAsync, setItemAsync, deleteItemAsync } from 'expo-secure-store';
 import { login as apiLogin, signup as apiSignup } from '../utils/api';
 
 const TOKEN_KEY = 'auth_token';
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadToken = async () => {
       try {
-        const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+        const storedToken = await getItemAsync(TOKEN_KEY);
         if (storedToken) {
           setToken(storedToken);
         }
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       if (data.token) {
         setToken(data.token);
         setUser({ email });
-        await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+        await setItemAsync(TOKEN_KEY, data.token);
         return true;
       }
       throw new Error(data.message || 'Login failed');
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setToken(null);
     setUser(null);
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await deleteItemAsync(TOKEN_KEY);
   };
 
   const value = {

@@ -18,15 +18,21 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
   const { login } = useAuth();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
     setLoading(true);
+    setError('');
     try {
       await login(email, password);
-    } catch (error) {
-      Alert.alert('Login Failed', error.message || 'An error occurred.');
+    } catch (err) {
+      setError(err.message || 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -43,6 +49,11 @@ const LoginScreen = () => {
       <Animatable.Text animation="fadeInUp" delay={200} duration={1000} style={styles.title}>
         Welcome Back!
       </Animatable.Text>
+      {error ? (
+        <Animatable.Text animation="shake" duration={500} style={styles.errorText}>
+          {error}
+        </Animatable.Text>
+      ) : null}
       <Animatable.View animation="fadeInUp" delay={400} duration={1000} style={{width: '100%'}}>
         <TextInput
           style={styles.input}
