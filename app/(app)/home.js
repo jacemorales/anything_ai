@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,43 +9,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  TouchableOpacity,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { generate } from '../../utils/api';
-import { useVoiceToText } from '@appcitor/react-native-voice-to-text';
 import { useAuth } from '../../context/AuthContext';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   const [messages, setMessages] = useState([]);
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { token, logout } = useAuth();
-
-  const {
-    isRecording,
-    isListening,
-    isSpeaking,
-    isReady,
-    hasPermission,
-    results,
-    start,
-    stop,
-    cancel,
-    destroy,
-    requestPermission,
-  } = useVoiceToText();
-
-  useEffect(() => {
-    if (results && results.length > 0) {
-      setPrompt(results[0]);
-    }
-  }, [results]);
-
-  useEffect(() => {
-    return () => {
-      destroy();
-    };
-  }, [destroy]);
 
   const handleSend = async () => {
     if (!prompt.trim() || !token) return;
@@ -69,22 +43,9 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const handleVoicePress = async () => {
-    const permission = await requestPermission();
-    if (permission) {
-      if (isRecording) {
-        stop();
-      } else {
-        start();
-      }
-    } else {
-      Alert.alert("Permission Denied", "You need to grant microphone permission to use this feature.");
-    }
-  };
-
   const handleLogout = () => {
     logout();
-    // Navigation back to the login screen will be handled by the main App navigator
+    // Navigation will be handled by the root layout.
   };
 
   const renderItem = ({ item }) => (
@@ -112,14 +73,11 @@ const HomeScreen = ({ navigation }) => {
           onChangeText={setPrompt}
           placeholder="Type your message..."
         />
-        <TouchableOpacity onPress={handleVoicePress} style={styles.micButton}>
-          <Text>{isRecording ? 'Stop' : 'Mic'}</Text>
-        </TouchableOpacity>
         <Button title="Send" onPress={handleSend} disabled={loading} />
       </View>
       <Button
         title="Manage Subscription"
-        onPress={() => navigation.navigate('Subscription')}
+        onPress={() => router.push('/subscription')}
       />
       <Button
         title="Logout"
@@ -169,10 +127,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15,
-    marginRight: 10,
-  },
-  micButton: {
-    padding: 10,
     marginRight: 10,
   },
 });

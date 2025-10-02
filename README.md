@@ -1,22 +1,28 @@
-# Anything AI - React Native
+# Anything AI - Expo
 
-This is a React Native application that serves as the frontend for the Anything AI platform. It is a full-blown mobile application that communicates with a backend service to provide AI-powered features.
+This is an Expo application that serves as the frontend for the Anything AI platform. It is a full-blown mobile application that communicates with a backend service to provide AI-powered features.
 
 ## Project Overview
 
-The project is structured as a monorepo with a `backend` directory and a React Native frontend at the root level.
+The project is structured as a monorepo with a `backend` directory and an Expo-based frontend at the root level.
 
-- **Frontend**: A React Native application for iOS and Android.
+- **Frontend**: An Expo application for iOS, Android, and web.
 - **Backend**: An Express.js server that handles API requests, user authentication, and interaction with the database.
+
+## Features
+
+- **AI-Powered Chat**: Engage in conversations with an AI, powered by a robust backend.
+- **User Authentication**: Secure sign-up and login functionality with persistent sessions.
+- **Subscription Management**: View and manage your subscription plan directly within the app.
+- **Cross-Platform**: Built with Expo for a consistent experience on iOS, Android, and the web.
+
+**Note on Voice Input:** The voice input feature was temporarily removed to resolve a library compatibility issue that was preventing the application from starting. This feature can be revisited in the future with a more stable, Expo-compatible solution.
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js and npm
-- React Native CLI
-- Xcode (for iOS development)
-- Android Studio (for Android development)
 - A running instance of the backend server.
 
 ### Backend Setup
@@ -37,7 +43,7 @@ The backend server will be running at `http://localhost:3000`.
 
 ### Frontend Setup
 
-1. **Install dependencies:**
+1. **Navigate to the project root and install dependencies:**
    ```bash
    npm install
    ```
@@ -51,11 +57,14 @@ The backend server will be running at `http://localhost:3000`.
      ```bash
      npm run android
      ```
+   - **For Web:**
+     ```bash
+     npm run web
+     ```
 
 ## Available Scripts
 
+- `npm start`: Starts the Expo development server.
 - `npm run ios`: Runs the app on the iOS simulator.
 - `npm run android`: Runs the app on an Android emulator or connected device.
-- `npm start`: Starts the Metro bundler.
-- `npm test`: Runs the test suite.
-- `npm run lint`: Lints the code.
+- `npm run web`: Runs the app in a web browser.
