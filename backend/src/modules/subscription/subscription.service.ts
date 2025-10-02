@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../config/db';
 
 export const SubscriptionService = {
   async getSubscription(userId: number) {

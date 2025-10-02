@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../config/db';
 
 const USAGE_LIMITS = {
   daily: { prompts: 10, characters: 1000 },

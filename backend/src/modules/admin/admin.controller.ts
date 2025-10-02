@@ -1,8 +1,6 @@
 import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../config/db';
 import { AuthRequest } from '../../types/auth';
-
-const prisma = new PrismaClient();
 
 export const AdminController = {
   async getStats(req: AuthRequest, res: Response) {

@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
+import prisma from '../../config/db';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key';
 
 export const AuthService = {
@@ -28,6 +26,18 @@ export const AuthService = {
   async login(email: string, password: string) {
     const user = await prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        isAdmin: true,
+        subscriptions: {
+          orderBy: {
+            endDate: 'desc',
+          },
+          take: 1,
+        },
+      },
     });
 
     if (!user) {
@@ -40,9 +50,29 @@ export const AuthService = {
       throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, isAdmin: user.isAdmin }, JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const latestSubscription = user.subscriptions[0];
+    let subscriptionStatus = 'none';
+
+    if (latestSubscription) {
+      if (latestSubscription.endDate === null || new Date() < new Date(latestSubscription.endDate)) {
+        subscriptionStatus = 'active';
+      } else {
+        subscriptionStatus = 'expired';
+      }
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        subscriptionStatus,
+      },
+      JWT_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
 
     return { token };
   },
